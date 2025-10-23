@@ -1,0 +1,136 @@
+\documentclass[12pt,a4paper]{article}
+
+% Pacotes básicos
+\usepackage[utf8]{inputenc}     % Codificação do arquivo
+\usepackage[T1]{fontenc}        % Acentos corretos
+\usepackage[brazil]{babel}      % Português do Brasil
+\usepackage{graphicx}           % Inclusão de imagens
+\usepackage{float}              % Melhor controle de posição de figuras/tabelas
+\usepackage{amsmath, amssymb}   % Símbolos matemáticos
+\usepackage{hyperref}           % Links clicáveis
+\usepackage{caption}            % Legendas personalizadas
+\usepackage{cite}               % Gerenciamento de citações
+\usepackage{listings}           % para formatar blocos de código
+\usepackage{enumitem}           % para controlar listas
+\usepackage{xcolor}             % necessário para cores no listings
+
+% Configurações do listings
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  numbers=left,
+  numberstyle=\tiny,
+  frame=single,
+  breaklines=true,
+  keywordstyle=\color{blue}\bfseries,
+  stringstyle=\color{red},
+  commentstyle=\color{green!60!black}\itshape,
+  showstringspaces=false
+}
+
+\begin{document}
+
+% ==============================
+% CAPA
+% ==============================
+\begin{titlepage}
+    \centering
+    {\Large \textbf{Universidade Federal de Minas Gerais}}\\[0.3cm]
+    {\large Engenharia de Sistemas}\\[2cm]
+    
+    {\Huge \textbf{Relatório do Trabalho Prático II - Coloração em Grafos}}\\[1.5cm]
+    
+    \textbf{Fundamentos de Inteligência Artificial}\\[0.5cm]
+    \textbf{Professores:} Cristiano Castro e João Pedro Campos\\[1.5cm]
+    
+    \begin{flushleft}
+        \textbf{Alunos:}\\
+        Áquila Oliveira Souza --- 2021019327\\
+        Arthur Jorge --- 2022055718\\
+        Felippe Veloso Marinho --- 2021072260\\
+        Jefferson Pereira de Souza --- 2022099049\\
+        Josoé Santos Queiroz --- 2019026982
+    \end{flushleft}
+    
+    \vfill
+    {\large Belo Horizonte, MG}\\
+    {\large \today}
+\end{titlepage}
+
+\clearpage
+\tableofcontents
+\clearpage
+
+% ==============================
+% INTRODUÇÃO
+% ==============================
+\section{Introdução}
+Nesta seção, deve ser apresentada uma visão geral do problema, os objetivos do relatório e uma breve descrição das tarefas realizadas. 
+\cite{cormen}.
+
+\section{Problema da coloração em grafos}
+
+\section{Heurísticas - Teoria}
+Nessa sessão será definido como cada uma das heurísticas são.
+
+\subsection{Random Walk (RW)}
+
+\subsection{Best Improvement (BI)}
+
+\subsection{First Improvement with Random Local Search (FI-RS)}
+
+\subsection{First Improvement with Any Conflict (FI-AC)}
+
+\subsection{Simulated Annealing (SA)}
+
+\subsection{Algoritmo Genético (GA)}
+
+
+\section{Heurísticas - Implementação}
+\subsection{Random Walk (RW)}
+Escolhe aleatoriamente uma variável e muda sua cor aleatoriamente.
+
+\subsection{Best Improvement (BI)}
+• Testa TODAS as mudanças possíveis (todos os vértices e cores).
+• Escolhe a mudança que mais reduz conflitos.
+
+\subsection{First Improvement with Random Local Search (FI-RS)}
+• Escolhe uma variável aleatoriamente.
+• Tenta uma cor aleatória para ela.
+• Se melhorar, aceita.
+
+\subsection{First Improvement with Any Conflict (FI-AC)}
+• Escolhe uma variável que está em conflito.
+• Tenta todas as cores possíveis.
+• Escolhe a cor que mais reduz conflitos (best color para aquela variável).
+
+\subsection{Simulated Annealing (SA)}
+• Parecido com FI, mas aceita piores soluções com uma probabilidade que é
+função do parâmetro de temperatura (que decai com o tempo) e da diferença
+entre o número de conflitos entre a coloração (atribuição) atual e a nova
+coloração.
+
+\subsection{Algoritmo Genético (GA)}
+• Evolui um conjunto de soluções candidatas, denominado população;
+• A cada passo, as soluções atuais interagem entre si, através dos operadores
+de recombinação (crossover) e mutação (mutation) para produzir uma nova
+população.
+
+\section{DSATUR}
+\begin{itemize}
+\item Explicação da heurística;
+\item Implementação em código;
+\item Decisões de implementação.
+\end{itemize}
+
+
+\section{Conclusão}
+Apresentar as conclusões gerais do trabalho, destacando os principais aprendizados e possíveis melhorias futuras.
+
+\section*{Referências}
+\bibliographystyle{plain}
+Inserir todas as referências utilizadas no mesmo formato (ABNT, APA ou Vancouver).  
+Exemplo em ABNT:
+\bibliography{references}
+
+\end{document}
