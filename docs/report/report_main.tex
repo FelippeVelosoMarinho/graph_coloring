@@ -65,17 +65,29 @@
 % INTRODUÇÃO
 % ==============================
 \section{Introdução}
-Nesta seção, deve ser apresentada uma visão geral do problema, os objetivos do relatório e uma breve descrição das tarefas realizadas. 
-\cite{cormen}.
+A coloração de grafos é um problema clássico da teoria dos grafos com diversas aplicações práticas, como na alocação de frequências em redes sem fio, escalonamento de tarefas e planejamento de horários. O objetivo é atribuir cores aos vértices de um grafo de forma que vértices adjacentes não compartilhem a mesma cor, minimizando o número total de cores utilizadas.
 
+Neste relatório, apresentamos uma solução para o problema de coloração de grafos, modelando-o formalmente como um grafo em que as arestas representam restrições binárias entre os vértices. 
+
+Além disso, detalhamos as heurísticas utilizadas para resolver o problema, discutindo suas abordagens teóricas e implementações práticas. Também analisamos as decisões tomadas durante o desenvolvimento e os resultados obtidos.
+
+O documento está organizado da seguinte forma: na Seção 2, apresentamos o problema de coloração de grafos; na Seção 3, discutimos as heurísticas teóricas; na Seção 4, detalhamos suas implementações; e, por fim, na Seção 5, apresentamos as conclusões e possíveis melhorias futuras.
 \section{Problema da coloração em grafos}
 
 \section{Heurísticas - Teoria}
 Nessa sessão será definido como cada uma das heurísticas são.
 
 \subsection{Random Walk (RW)}
+O Random Walk é uma heurística de busca estocástica que explora o espaço de soluções movendo-se aleatoriamente entre as distribuições do grafo para encontrar uma coloração viável. 
+
+A ideia principal é começar com uma coloração inicial (geralmente aleatória) e, em seguida, ajustar os conflitos, ou seja, resolver os casos em que vértices adjacentes possuem a mesma cor. Esse processo é repetido até que uma solução aceitável seja encontrada ou até que um critério de parada seja atingido.
 
 \subsection{Best Improvement (BI)}
+O Best Improvement é uma heurística que busca a melhor solução possível em cada iteração. O Best Improvement (BI) é uma heurística de busca local usada para melhorar uma solução já existente. 
+
+A ideia é que, inicialmente, temos uma solução e, a partir dela, buscamos melhorá-la realizando pequenas alterações. Em vez de aceitar a primeira melhoria encontrada, o BI verifica todas as possíveis mudanças e escolhe aquela que oferece o maior benefício.
+
+No contexto do problema de coloração de grafos, o objetivo é minimizar o número de conflitos (quando vértices vizinhos possuem a mesma cor) ou reduzir a quantidade de cores utilizadas para resolver o problema.
 
 \subsection{First Improvement with Random Local Search (FI-RS)}
 
