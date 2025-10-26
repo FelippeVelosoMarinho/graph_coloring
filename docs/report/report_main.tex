@@ -72,28 +72,42 @@ Neste relatório, apresentamos uma solução para o problema de coloração de g
 Além disso, detalhamos as heurísticas utilizadas para resolver o problema, discutindo suas abordagens teóricas e implementações práticas. Também analisamos as decisões tomadas durante o desenvolvimento e os resultados obtidos.
 
 O documento está organizado da seguinte forma: na Seção 2, apresentamos o problema de coloração de grafos; na Seção 3, discutimos as heurísticas teóricas; na Seção 4, detalhamos suas implementações; e, por fim, na Seção 5, apresentamos as conclusões e possíveis melhorias futuras.
-\section{Problema da coloração em grafos}
+\section{Problema da Coloração de Grafos}
+\label{sec:problema}
 
-\section{Heurísticas - Teoria}
-Nessa sessão será definido como cada uma das heurísticas são.
+O problema da coloração de grafos consiste em associar uma cor a cada vértice de um grafo \( G = (V, E) \), de modo que dois vértices adjacentes \( u, v \in V \) não possuam a mesma cor. O desafio é minimizar o número total de cores utilizadas, conhecido como número cromático do grafo. Trata-se de um problema NP-difícil, o que motiva o uso de heurísticas e metaheurísticas para obtenção de soluções aproximadas em tempo viável.
+
+\section{Heurísticas — Fundamentação Teórica}
+\label{sec:heuristicas}
+
+Nesta seção, são descritas as heurísticas empregadas para resolver o problema de coloração de grafos.
 
 \subsection{Random Walk (RW)}
-O Random Walk é uma heurística de busca estocástica que explora o espaço de soluções movendo-se aleatoriamente entre as distribuições do grafo para encontrar uma coloração viável. 
 
-A ideia principal é começar com uma coloração inicial (geralmente aleatória) e, em seguida, ajustar os conflitos, ou seja, resolver os casos em que vértices adjacentes possuem a mesma cor. Esse processo é repetido até que uma solução aceitável seja encontrada ou até que um critério de parada seja atingido.
+O \textit{Random Walk} é uma heurística de busca estocástica que explora o espaço de soluções movendo-se aleatoriamente entre colorações possíveis. O processo inicia-se com uma coloração aleatória e, em seguida, ajusta-se gradualmente os conflitos — isto é, os casos em que vértices adjacentes possuem a mesma cor. Esse procedimento é repetido até que se encontre uma solução viável ou que seja atingido um critério de parada.
 
 \subsection{Best Improvement (BI)}
-O Best Improvement é uma heurística que busca a melhor solução possível em cada iteração. O Best Improvement (BI) é uma heurística de busca local usada para melhorar uma solução já existente. 
 
-A ideia é que, inicialmente, temos uma solução e, a partir dela, buscamos melhorá-la realizando pequenas alterações. Em vez de aceitar a primeira melhoria encontrada, o BI verifica todas as possíveis mudanças e escolhe aquela que oferece o maior benefício.
-
-No contexto do problema de coloração de grafos, o objetivo é minimizar o número de conflitos (quando vértices vizinhos possuem a mesma cor) ou reduzir a quantidade de cores utilizadas para resolver o problema.
+O \textit{Best Improvement} é uma heurística de busca local que busca a melhor melhoria possível em cada iteração. A partir de uma solução inicial, o algoritmo avalia todas as alterações viáveis e seleciona aquela que proporciona o maior ganho.  
+No contexto da coloração de grafos, o objetivo é reduzir o número de conflitos (vértices adjacentes com a mesma cor) ou diminuir o total de cores utilizadas.
 
 \subsection{First Improvement with Random Local Search (FI-RS)}
 
+O \textit{First Improvement with Random Local Search} (FI-RS) é uma metaheurística de busca local que combina o \textit{Random Local Search} e o \textit{First Improvement}.  
+O primeiro realiza pequenas alterações aleatórias em uma solução, enquanto o segundo aceita a primeira melhoria encontrada, sem necessidade de examinar todas as opções.  
+Aplicado à coloração de grafos, o FI-RS busca uma coloração com o menor número de conflitos de forma eficiente, evitando uma exploração exaustiva do espaço de busca.
+
 \subsection{First Improvement with Any Conflict (FI-AC)}
 
+O \textit{First Improvement with Any Conflict} (FI-AC) é uma variação da heurística de busca local. A partir de uma solução inicial, possivelmente com conflitos, o algoritmo tenta melhorá-la iterativamente.  
+A estratégia \textit{First Improvement} implica aceitar imediatamente o primeiro movimento que melhora a solução, sem buscar o melhor global. Já o termo \textit{Any Conflict} indica que qualquer vértice envolvido em conflito pode ser escolhido aleatoriamente para modificação.  
+No problema de coloração de grafos, o FI-AC aprimora progressivamente a coloração até eliminar os conflitos entre vértices adjacentes.
+
 \subsection{Simulated Annealing (SA)}
+
+O \textit{Simulated Annealing} (SA) é uma metaheurística de busca estocástica inspirada no processo físico de recozimento térmico de metais. Nesse processo, o material é aquecido e resfriado lentamente para alcançar uma configuração estável de mínima energia.  
+Analogamente, o SA aceita piores soluções no início (alta temperatura) e torna-se mais seletivo à medida que a “temperatura” diminui, buscando escapar de ótimos locais e aproximar-se de uma solução globalmente ótima.  
+Na coloração de grafos, o SA visa reduzir gradualmente os conflitos de coloração, aceitando ocasionalmente soluções piores para explorar melhor o espaço de busca.
 
 \subsection{Algoritmo Genético (GA)}
 
