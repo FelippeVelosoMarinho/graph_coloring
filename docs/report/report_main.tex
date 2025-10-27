@@ -28,6 +28,8 @@
   showstringspaces=false
 }
 
+\graphicspath{{./img/}} % Diretório das imagens
+
 \begin{document}
 
 % ==============================
@@ -91,14 +93,22 @@ No contexto do problema de coloração de grafos, o objetivo é minimizar o núm
 
 \subsection{First Improvement with Random Local Search (FI-RS)}
 
+O algoritmo segue uma abordagem estocástica para atribuição de cores às variáveis. Inicialmente, uma variável é escolhida de forma aleatória. Em seguida, seleciona-se uma cor aleatória para essa variável. Caso essa nova atribuição de cor resulte em uma melhoria na solução — por exemplo, reduzindo conflitos ou otimizando algum critério definido — a alteração é aceita. Esse método permite explorar de maneira ampla o espaço de soluções, aproveitando a aleatoriedade para escapar de mínimos locais, contudo pode não ser tão eficiente quanto outras abordagens mais sistemáticas.
+
 \subsection{First Improvement with Any Conflict (FI-AC)}
+
+Esse método foca em identificar as variáveis em conflito e tenta melhorar a solução ao alterar a cor da variável. A cor escolhida é a que mais reduz o número de conflitos.
 
 \subsection{Simulated Annealing (SA)}
 
+O processo de Recozimento Simulado (Simulated Annealing - SA) é uma técnica de otimização que pode escolher soluções piores com uma certa probabilidade, permitindo escapar de mínimos locais. A probabilidade de aceitar uma solução pior diminui ao longo do tempo, controlada por um parâmetro chamado temperatura, de onde vem o nome da técnica.
+
 \subsection{Algoritmo Genético (GA)}
 
+Os Algoritmos Genéticos (AG) são técnicas de otimização inspiradas no processo de seleção natural. Eles trabalham com uma população de soluções candidatas, que evoluem ao longo do tempo através de operadores genéticos como seleção, cruzamento (crossover) e mutação.
 
 \section{Heurísticas - Implementação}
+
 \subsection{Random Walk (RW)}
 Escolhe aleatoriamente uma variável e muda sua cor aleatoriamente.
 
@@ -128,12 +138,60 @@ coloração.
 de recombinação (crossover) e mutação (mutation) para produzir uma nova
 população.
 
-\section{DSATUR}
+\subsection{DSATUR}
+
+O DSATUR (Degree of Saturation) é uma heurística gulosa para o problema de coloração de grafos que prioriza a coloração dos vértices com maior grau de saturação, ou seja, aqueles que possuem o maior número de cores diferentes já atribuídas aos seus vizinhos. Essa heurística é particularmente eficaz para o problema de coloração., pois ao focar nos vértices mais "constrangidos", ela tende a minimizar o número total de cores necessárias para uma coloração válida.
+
+A implementação do DSATUR envolve os seguintes passos principais:
+
 \begin{itemize}
-\item Explicação da heurística;
-\item Implementação em código;
-\item Decisões de implementação.
+ \item Os vértices do grafo são ordenados com base em seu grau de saturação.
+ \item O vértice mais saturado é selecionado para a coloração.
+ \item A cor mais baixa possível é atribuída ao vértice selecionado, garantindo que não haja conflitos com os vizinhos já coloridos.
+ \item O processo é repetido até que todos os vértices estejam coloridos.
 \end{itemize}
+
+\section{Experimentos}
+
+O objetivo dos experimentos é avaliar o desempenho das heurísticas implementadas na resolução do problema de coloração de grafos. Para isso, realizamos uma série de 30 execuções para cada heurística, utilizando diferentes instâncias do problema. As instâncias seleciondas foram a fornecida no enunciado da tarefa e outras duas instâncias.
+
+Cada execução foi monitorada quanto ao tempo de processamento e a porcentagem de instâncias resolvidas. Neste experimento não limitamos o número de cores mas limitamos o tempo de execução para 2 segundos por execução.
+
+As instâncias utilizadas nos experimentos foram:
+
+\begin{itemize}
+ \item \textbf{default}: A instância padrão fornecida no enunciado da tarefa, servindo como base para comparação entre as heurísticas.
+ \item \textbf{myciel.5.col}: Uma instância maior com 47 vértices, representando um desafio mediano para as heurísticas.
+ \item \textbf{queen9-9.col}: A maior instância utilizada, com 81 vértices e 2112 aréstas, testando a escalabilidade e eficiência das heurísticas em problemas maiores.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{./img/output-default.png}
+    \caption{Experimento com a instância default.}
+    \label{fig:experimento-default}
+\end{figure}
+
+Neste experimento, podemos observar que a heurística DSATUR se destacou significativamente, alcançando uma taxa de resolução de 100\% das instância quase instantaneamente, com um tempo médio de execução de apenas 0.01 segundos. Isso indica que o DSATUR é altamente eficiente para a instância default, conseguindo encontrar soluções ótimas rapidamente.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{./img/output-myciel5.png}
+    \caption{Experimento com a instância myciel.5.col.}
+    \label{fig:experimento-myciel5}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{./img/output-queen9-9.png}
+    \caption{Experimento com a instância queen9-9.col.}
+    \label{fig:experimento-queen9-9}
+\end{figure}
+
+Nos dois exeperimentos subsequentes, com as instâncias myciel.5.col e queen9-9.col, alguns algorítmos não encontraram soluções viáveis dentro do limite de tempo estabelecido. E por isto não aparecem nos gráficos. Esses resultados ressaltam a importância de considerar a complexidade do problema e a adequação das heurísticas utilizadas para diferentes instâncias.
+
+Nos experimentos com instâncias maiores, como myciel.5.col e queen9-9.col, observamos que a heurística DSATUR continuou a se destacar, mantendo uma taxa de resolução de 100\% em ambas as instâncias. Isso demonstra a robustez e eficiência do DSATUR mesmo em problemas mais complexos.
 
 
 \section{Conclusão}
