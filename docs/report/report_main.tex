@@ -13,6 +13,9 @@
 \usepackage{listings}           % para formatar blocos de código
 \usepackage{enumitem}           % para controlar listas
 \usepackage{xcolor}             % necessário para cores no listings
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 
 % Configurações do listings
 \lstset{
@@ -121,33 +124,212 @@ Os Algoritmos Genéticos (AG) são técnicas de otimização inspiradas no proce
 \section{Heurísticas - Implementação}
 
 \subsection{Random Walk (RW)}
-Escolhe aleatoriamente uma variável e muda sua cor aleatoriamente.
+Por ser uma heurística de busca estocástica que explora o espaço de soluções movendo-se aleatoriamente entre as colorações possíveis, o processo se inicia com uma coloração aleatória e, em seguida, ajusta-se gradualmente os conflitos. Esse procedimento se repete até que não existam mais conflitos (uma coloração válida) ou que o limite de iterações seja atingido.
+
+\begin{algorithm}
+\caption{Random Walk (RW)}
+\label{alg:random_walk}
+\begin{algorithmic}[1]
+\REQUIRE Grafo $G$, Coloração Inicial $C_{\text{inicial}}$, Conjunto de Cores $\mathcal{K}$, Máx. Iterações $I_{\max}$
+\ENSURE Coloração $C$ com o menor número de conflitos
+\STATE $C \gets C_{\text{inicial}}$
+\STATE $conflitos \gets \text{ContarConflitos}(G, C)$
+\FOR{$i = 1$ to $I_{\max}$}
+    \STATE $v \gets \text{EscolherAleatoriamente}(\text{Vértices}(G))$
+    \STATE $k_{\text{novo}} \gets \text{EscolherAleatoriamente}(\mathcal{K})$
+    \STATE $C_{\text{novo}} \gets C$
+    \STATE $C_{\text{novo}}[v] \gets k_{\text{novo}}$
+    \STATE $conflitos_{\text{novo}} \gets \text{ContarConflitos}(G, C_{\text{novo}})$
+    \IF{$conflitos_{\text{novo}} < conflitos$}
+        \STATE $C \gets C_{\text{novo}}$
+        \STATE $conflitos \gets conflitos_{\text{novo}}$
+        \IF{$conflitos = 0$}
+            \STATE \textbf{break}
+        \ENDIF
+    \ENDIF
+\ENDFOR
+\RETURN $C, conflitos$
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Best Improvement (BI)}
-• Testa TODAS as mudanças possíveis (todos os vértices e cores).
-• Escolhe a mudança que mais reduz conflitos.
+O \textit{Best Improvement} é uma heurística de busca local que busca a melhor melhoria possível em cada iteração. A partir de uma solução inicial, o algoritmo avalia todas as alterações viáveis dentro de uma vizinhança definida e seleciona aquela que proporciona o maior ganho. No contexto da coloração de grafos, o objetivo é reduzir o número de conflitos (vértices adjacentes com a mesma cor).
+
+\begin{algorithm}
+\caption{Best Improvement (BI)}
+\label{alg:best_improvement}
+\begin{algorithmic}[1]
+\REQUIRE Grafo $G$, Coloração Inicial $C_{\text{inicial}}$, Conjunto de Cores $\mathcal{K}$, Máx. Iterações $I_{\max}$
+\ENSURE Coloração $C$ com o menor número de conflitos
+\STATE $C \gets C_{\text{inicial}}$
+\STATE $conflitos \gets \text{ContarConflitos}(G, C)$
+\FOR{$i = 1$ to $I_{\max}$}
+    \STATE $C_{\text{melhor}} \gets C$
+    \STATE $melhor\_melhora \gets 0$
+    \FOR{cada vértice $v$ em $\text{Vértices}(G)$}
+        \FOR{cada cor $k$ em $\mathcal{K}$}
+            \STATE $C_{\text{temp}} \gets C$
+            \STATE $C_{\text{temp}}[v] \gets k$
+            \STATE $conflitos_{\text{temp}} \gets \text{ContarConflitos}(G, C_{\text{temp}})$
+            \STATE $melhora \gets conflitos - conflitos_{\text{temp}}$
+            \IF{$melhora > melhor\_melhora$}
+                \STATE $melhor\_melhora \gets melhora$
+                \STATE $C_{\text{melhor}} \gets C_{\text{temp}}$
+            \ENDIF
+        \ENDFOR
+    \ENDFOR
+    \IF{$melhor\_melhora = 0$}
+        \STATE \textbf{break} \COMMENT{Preso em ótimo local}
+    \ENDIF
+    \STATE $C \gets C_{\text{melhor}}$
+    \STATE $conflitos \gets conflitos - melhor\_melhora$
+    \IF{$conflitos = 0$}
+        \STATE \textbf{break}
+    \ENDIF
+\ENDFOR
+\RETURN $C, conflitos$
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{First Improvement with Random Local Search (FI-RS)}
-• Escolhe uma variável aleatoriamente.
-• Tenta uma cor aleatória para ela.
-• Se melhorar, aceita.
+O \textit{First Improvement with Random Local Search} (FI-RS) é uma metaheurística de busca local que combina o \textit{Random Local Search} e o \textit{First Improvement}. O algoritmo seleciona aleatoriamente um vértice e atribui-lhe uma cor aleatória. Este novo estado é então avaliado. O movimento é aceito se a nova coloração for estritamente melhor (tiver menos conflitos) que a coloração atual, aplicando o critério \textit{First Improvement}.
+
+\begin{algorithm}
+\caption{First Improvement with Random Local Search (FI-RS)}
+\label{alg:fi_rs}
+\begin{algorithmic}[1]
+\REQUIRE Grafo $G$, Coloração Inicial $C_{\text{inicial}}$, Conjunto de Cores $\mathcal{K}$, Máx. Iterações $I_{\max}$
+\ENSURE Coloração $C$ com o menor número de conflitos
+\STATE $C \gets C_{\text{inicial}}$
+\STATE $conflitos \gets \text{ContarConflitos}(G, C)$
+\FOR{$i = 1$ to $I_{\max}$}
+    \STATE $v \gets \text{EscolherAleatoriamente}(\text{Vértices}(G))$
+    \STATE $k_{\text{novo}} \gets \text{EscolherAleatoriamente}(\mathcal{K})$
+    \STATE $C_{\text{novo}} \gets C$
+    \STATE $C_{\text{novo}}[v] \gets k_{\text{novo}}$
+    \STATE $conflitos_{\text{novo}} \gets \text{ContarConflitos}(G, C_{\text{novo}})$
+    \IF{$conflitos_{\text{novo}} < conflitos$}
+        \STATE $C \gets C_{\text{novo}}$
+        \STATE $conflitos \gets conflitos_{\text{novo}}$
+        \IF{$conflitos = 0$}
+            \STATE \textbf{break}
+        \ENDIF
+    \ENDIF
+\ENDFOR
+\RETURN $C, conflitos$
+\end{algorithmic}
+\end{algorithm}
+\textit{Nota: No contexto de coloração de grafos, o FI-RS é frequentemente implementado de forma idêntica ao Random Walk (RW), onde o 'Random Local Search' é a escolha aleatória de $v$ e $k_{\text{novo}}$, e o 'First Improvement' é o critério de aceitação de $conflitos_{\text{novo}} < conflitos$.}
 
 \subsection{First Improvement with Any Conflict (FI-AC)}
-• Escolhe uma variável que está em conflito.
-• Tenta todas as cores possíveis.
-• Escolhe a cor que mais reduz conflitos (best color para aquela variável).
+O \textit{First Improvement with Any Conflict} (FI-AC) é uma variação da heurística de busca local. A estratégia \textit{First Improvement} implica aceitar imediatamente o primeiro movimento que melhora a solução, sem buscar o melhor global. Já o termo \textit{Any Conflict} indica que qualquer vértice envolvido em conflito pode ser escolhido aleatoriamente para modificação.
+
+\begin{algorithm}
+\caption{First Improvement with Any Conflict (FI-AC)}
+\label{alg:fi_ac}
+\begin{algorithmic}[1]
+\REQUIRE Grafo $G$, Coloração Inicial $C_{\text{inicial}}$, Conjunto de Cores $\mathcal{K}$, Máx. Iterações $I_{\max}$
+\ENSURE Coloração $C$ com o menor número de conflitos
+\STATE $C \gets C_{\text{inicial}}$
+\STATE $conflitos, V_{\text{conflito}} \gets \text{RetornarConflitos}(G, C)$
+\IF{$conflitos = 0$}
+    \RETURN $C, conflitos$
+\ENDIF
+\FOR{$i = 1$ to $I_{\max}$}
+    \STATE $v \gets \text{EscolherAleatoriamente}(V_{\text{conflito}})$
+    \FOR{cada cor $k$ em $\mathcal{K}$}
+        \STATE $C_{\text{novo}} \gets C$
+        \STATE $C_{\text{novo}}[v] \gets k$
+        \STATE $conflitos_{\text{novo}}, V_{\text{novo\_conflito}} \gets \text{RetornarConflitos}(G, C_{\text{novo}})$
+        \IF{$conflitos_{\text{novo}} < conflitos$}
+            \STATE $C \gets C_{\text{novo}}$
+            \STATE $conflitos \gets conflitos_{\text{novo}}$
+            \STATE $V_{\text{conflito}} \gets V_{\text{novo\_conflito}}$
+            \IF{$conflitos = 0$}
+                \STATE \textbf{break} \COMMENT{Solução encontrada}
+            \ENDIF
+            \STATE \textbf{break} \COMMENT{Aceita o primeiro melhor e sai do loop interno}
+        \ENDIF
+    \ENDFOR
+    \IF{$conflitos = 0$}
+        \STATE \textbf{break}
+    \ENDIF
+\ENDFOR
+\RETURN $C, conflitos$
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Simulated Annealing (SA)}
-• Parecido com FI, mas aceita piores soluções com uma probabilidade que é
-função do parâmetro de temperatura (que decai com o tempo) e da diferença
-entre o número de conflitos entre a coloração (atribuição) atual e a nova
-coloração.
+
+O \textit{Simulated Annealing} (SA) é uma meta-heurística baseada no processo de recozimento de metais, onde a temperatura é lentamente reduzida para permitir que o material atinja um estado de energia mínima. Em problemas de otimização, ele é parecido com o First Improvement, mas aceita soluções piores (com mais conflitos) com uma probabilidade que é função do parâmetro de temperatura (que decai com o tempo) e da diferença entre o número de conflitos entre a coloração atual e a nova coloração. Essa aceitação de passos "ruins" permite que o algoritmo escape de ótimos locais.
+\begin{algorithm}
+\caption{Simulated Annealing (SA)}
+\label{alg:simulated_annealing}
+\begin{algorithmic}[1]
+\REQUIRE Grafo $G$, Coloração Inicial $C_{\text{inicial}}$, Conjunto de Cores $\mathcal{K}$, Máx. Iterações $I_{\max}$, Temperatura Inicial $T_0$
+\ENSURE Coloração $C$ com o menor número de conflitos
+\STATE $C \gets C_{\text{inicial}}$
+\STATE $conflitos \gets \text{ContarConflitos}(G, C)$
+\STATE $T \gets T_0$
+\FOR{$i = 1$ to $I_{\max}$}
+    \STATE $v \gets \text{EscolherAleatoriamente}(\text{Vértices}(G))$
+    \STATE $k_{\text{novo}} \gets \text{EscolherAleatoriamente}(\mathcal{K})$
+    \STATE $C_{\text{novo}} \gets C$
+    \STATE $C_{\text{novo}}[v] \gets k_{\text{novo}}$
+    \STATE $conflitos_{\text{novo}} \gets \text{ContarConflitos}(G, C_{\text{novo}})$
+    \STATE $\Delta E \gets conflitos_{\text{novo}} - conflitos$ \COMMENT{Diferença de "Energia" (Conflitos)}
+    \IF{$\Delta E < 0$} \COMMENT{Melhoria (solução melhor)}
+        \STATE $C \gets C_{\text{novo}}$
+        \STATE $conflitos \gets conflitos_{\text{novo}}$
+    \ELSE \COMMENT{Piora (solução pior)}
+        \STATE $P \gets \text{ProbabilidadeAceitacao}(\Delta E, T)$
+        \IF{$\text{Aleatório}(0, 1) < P$}
+            \STATE $C \gets C_{\text{novo}}$ \COMMENT{Aceita a solução pior estocasticamente}
+            \STATE $conflitos \gets conflitos_{\text{novo}}$
+        \ENDIF
+    \ENDIF
+    \IF{$conflitos = 0$}
+        \STATE \textbf{break}
+    \ENDIF
+    \STATE $T \gets \text{DecairTemperatura}(T, i)$
+\ENDFOR
+\RETURN $C, conflitos$
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Algoritmo Genético (GA)}
-• Evolui um conjunto de soluções candidatas, denominado população;
-• A cada passo, as soluções atuais interagem entre si, através dos operadores
-de recombinação (crossover) e mutação (mutation) para produzir uma nova
-população.
+
+O \textit{Algoritmo Genético} (GA) é uma meta-heurística de busca global inspirada na evolução biológica. Ele evolui um conjunto de soluções candidatas, denominado **população**. A cada passo (geração), as soluções atuais interagem entre si através de operadores genéticos (seleção, recombinação (*crossover*) e mutação) para produzir uma nova população, buscando a convergência para soluções de alta qualidade. No problema de coloração, cada indivíduo (cromossomo) na população representa uma coloração completa do grafo.
+
+\begin{algorithm}
+\caption{Algoritmo Genético (GA) para Coloração}
+\label{alg:genetic_algorithm}
+\begin{algorithmic}[1]
+\REQUIRE Grafo $G$, Conjunto de Cores $\mathcal{K}$, Tamanho da População $N$, Máx. Gerações $G_{\max}$
+\ENSURE Melhor Coloração $C_{\text{melhor}}$
+\STATE $\mathcal{P} \gets \text{GerarPopulaçãoInicial}(N, G, \mathcal{K})$
+\STATE $C_{\text{melhor}} \gets \text{MelhorSolução}(\mathcal{P})$
+\FOR{$g = 1$ to $G_{\max}$}
+    \STATE $\mathcal{P}_{\text{nova}} \gets \emptyset$
+    \FOR{$j = 1$ to $N/2$}
+        \STATE $P_1, P_2 \gets \text{Seleção}(\mathcal{P})$ \COMMENT{Seleciona pais (e.g., Torneio, Roleta)}
+        \STATE $F_1, F_2 \gets \text{Crossover}(P_1, P_2)$ \COMMENT{Gera filhos por recombinação}
+        \STATE $F_1 \gets \text{Mutação}(F_1, \mathcal{K})$ \COMMENT{Aplica mutação (mudança aleatória de cor)}
+        \STATE $F_2 \gets \text{Mutação}(F_2, \mathcal{K})$
+        \STATE $\mathcal{P}_{\text{nova}} \gets \mathcal{P}_{\text{nova}} \cup \{F_1, F_2\}$
+    \ENDFOR
+    \STATE $\mathcal{P} \gets \mathcal{P}_{\text{nova}}$ \COMMENT{Substituição geracional}
+    \STATE $C_{\text{atual\_melhor}} \gets \text{MelhorSolução}(\mathcal{P})$
+    \IF{$\text{Avaliar}(C_{\text{atual\_melhor}}) < \text{Avaliar}(C_{\text{melhor}})$}
+        \STATE $C_{\text{melhor}} \gets C_{\text{atual\_melhor}}$
+    \ENDIF
+    \IF{$\text{Avaliar}(C_{\text{melhor}}) = 0$}
+        \STATE \textbf{break}
+    \ENDIF
+\ENDFOR
+\RETURN $C_{\text{melhor}}, \text{Avaliar}(C_{\text{melhor}})$
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{DSATUR}
 
